@@ -2,98 +2,108 @@
 
 import StatCard from "@/components/dashboard/StatCard";
 import IssueTable from "@/components/dashboard/IssueTable";
-import { CheckCircle2, Clock, AlertTriangle, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, XCircle, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function WardEngineerDashboard() {
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-950 to-slate-900 p-4 md:p-6 space-y-6">
+    <div className="min-h-screen bg-gray-50 p-6 space-y-8">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2">Ward Engineer Dashboard</h1>
-        <p className="text-slate-400">Verification & SLA Monitoring - Ward 12</p>
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="bg-emerald-100 p-3 rounded-lg">
+            <Building2 className="w-6 h-6 text-emerald-600" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">Ward Engineer</h1>
+            <p className="text-gray-600">Issue Verification & Quality Control - Ward 12</p>
+          </div>
+        </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Performance Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard 
           title="Open Issues" 
           value="18" 
-          icon={<AlertTriangle className="w-5 h-5" />}
+          icon={<AlertTriangle className="w-6 h-6" />}
           color="orange"
           trend={{ value: "+3 today", isPositive: false }}
         />
         <StatCard 
           title="In Progress" 
           value="7" 
-          icon={<Clock className="w-5 h-5" />}
+          icon={<Clock className="w-6 h-6" />}
           color="blue"
         />
         <StatCard 
-          title="Resolved" 
+          title="Verified Today" 
           value="112" 
-          icon={<CheckCircle2 className="w-5 h-5" />}
+          icon={<CheckCircle2 className="w-6 h-6" />}
           color="emerald"
           trend={{ value: "+8 today", isPositive: true }}
         />
         <StatCard 
-          title="SLA Breached" 
+          title="Overdue" 
           value="3" 
-          icon={<XCircle className="w-5 h-5" />}
+          icon={<XCircle className="w-6 h-6" />}
           color="red"
         />
       </div>
 
-      {/* SLA Overview */}
-      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">SLA Performance</h2>
-        <div className="space-y-3">
-          <div>
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-slate-300">Potholes (24h SLA)</span>
-              <span className="text-emerald-400 font-semibold">85%</span>
+      {/* Action Center */}
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <h2 className="text-xl font-semibold text-gray-800 mb-6">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-8 justify-start text-left">
+            <CheckCircle2 className="w-6 h-6 mr-4" />
+            <div>
+              <div className="font-semibold text-lg">Verify Completed Issues</div>
+              <div className="text-sm opacity-90">Review and approve field worker reports</div>
             </div>
-            <div className="w-full bg-white/10 rounded-full h-2">
-              <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '85%' }}></div>
+          </Button>
+          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-8 justify-start text-left">
+            <Clock className="w-6 h-6 mr-4" />
+            <div>
+              <div className="font-semibold text-lg">Review Pending Issues</div>
+              <div className="text-sm opacity-90">Check issues awaiting verification</div>
             </div>
-          </div>
-          <div>
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-slate-300">Garbage (12h SLA)</span>
-              <span className="text-blue-400 font-semibold">92%</span>
-            </div>
-            <div className="w-full bg-white/10 rounded-full h-2">
-              <div className="bg-blue-500 h-2 rounded-full" style={{ width: '92%' }}></div>
-            </div>
-          </div>
-          <div>
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-slate-300">Drainage (48h SLA)</span>
-              <span className="text-orange-400 font-semibold">78%</span>
-            </div>
-            <div className="w-full bg-white/10 rounded-full h-2">
-              <div className="bg-orange-500 h-2 rounded-full" style={{ width: '78%' }}></div>
-            </div>
-          </div>
+          </Button>
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="flex flex-wrap gap-3">
-        <Button className="bg-emerald-500 hover:bg-emerald-600">
-          <CheckCircle2 className="w-4 h-4 mr-2" />
-          Verify Resolved Issues
-        </Button>
-        <Button variant="outline" className="border-white/20 bg-white/5 hover:bg-white/10 text-white">
-          Upload After Photos
-        </Button>
-        <Button variant="outline" className="border-white/20 bg-white/5 hover:bg-white/10 text-white">
-          Download Ward Report
-        </Button>
+      {/* Issue Management */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-800">Issue Management</h2>
+          <p className="text-gray-600 mt-1">Review, verify and manage ward issues</p>
+        </div>
+        <div className="p-6">
+          <IssueTable role="WARD_ENGINEER" />
+        </div>
       </div>
 
-      {/* Issue List */}
-      <IssueTable role="WARD_ENGINEER" />
+      {/* Performance Summary */}
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <h2 className="text-xl font-semibold text-gray-800 mb-6">Today's Performance</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center p-6 bg-emerald-50 rounded-lg border border-emerald-200">
+            <div className="text-3xl font-bold text-emerald-600 mb-2">85%</div>
+            <p className="text-gray-700 font-medium">Verification Rate</p>
+            <p className="text-sm text-gray-500">Above target (80%)</p>
+          </div>
+          <div className="text-center p-6 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="text-3xl font-bold text-blue-600 mb-2">2.4h</div>
+            <p className="text-gray-700 font-medium">Avg Response Time</p>
+            <p className="text-sm text-gray-500">Within SLA (4h)</p>
+          </div>
+          <div className="text-center p-6 bg-purple-50 rounded-lg border border-purple-200">
+            <div className="text-3xl font-bold text-purple-600 mb-2">94%</div>
+            <p className="text-gray-700 font-medium">Quality Score</p>
+            <p className="text-sm text-gray-500">Excellent rating</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

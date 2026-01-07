@@ -2,130 +2,157 @@
 
 import StatCard from "@/components/dashboard/StatCard";
 import BaseMap from "@/components/maps/BaseMap";
-import { Flame, MapPin, TrendingUp, Users } from "lucide-react";
+import { TrendingUp, Users, AlertTriangle, Shield } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 export default function ZoneOfficerDashboard() {
   const wardData = [
-    { ward: "Ward 8", issues: 24, resolved: 18, sla: 87 },
-    { ward: "Ward 12", issues: 18, resolved: 12, sla: 85 },
-    { ward: "Ward 15", issues: 31, resolved: 21, sla: 71 },
-    { ward: "Ward 19", issues: 15, resolved: 13, sla: 92 },
+    { ward: "Ward 8", issues: 24, resolved: 18, status: "Good" },
+    { ward: "Ward 12", issues: 18, resolved: 12, status: "Fair" },
+    { ward: "Ward 15", issues: 31, resolved: 21, status: "Good" },
+    { ward: "Ward 19", issues: 15, resolved: 13, status: "Excellent" },
   ];
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Excellent": return "bg-emerald-100 text-emerald-700 border-emerald-200";
+      case "Good": return "bg-blue-100 text-blue-700 border-blue-200";
+      case "Fair": return "bg-orange-100 text-orange-700 border-orange-200";
+      default: return "bg-gray-100 text-gray-700 border-gray-200";
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-950 to-slate-900 p-4 md:p-6 space-y-6">
+    <div className="min-h-screen bg-gray-50 p-6 space-y-8">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2">Zone Officer Dashboard</h1>
-        <p className="text-slate-400">Multi-ward Analytics & Hotspot Detection - Zone East</p>
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="bg-purple-100 p-3 rounded-lg">
+            <Shield className="w-6 h-6 text-purple-600" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">Zone Officer</h1>
+            <p className="text-gray-600">Multi-Ward Oversight & Analytics - Zone East</p>
+          </div>
+        </div>
       </div>
 
-      {/* Zone Overview Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Zone Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard 
           title="Total Wards" 
           value="5" 
-          icon={<MapPin className="w-5 h-5" />}
+          icon={<Image src="/VMC.webp" alt="VMC" width={24} height={24} className="w-6 h-6 object-contain" />}
           color="blue"
         />
         <StatCard 
           title="Active Issues" 
           value="88" 
-          icon={<Users className="w-5 h-5" />}
+          icon={<AlertTriangle className="w-6 h-6" />}
           color="orange"
           trend={{ value: "+12 today", isPositive: false }}
         />
         <StatCard 
           title="Resolved Today" 
           value="64" 
-          icon={<TrendingUp className="w-5 h-5" />}
+          icon={<TrendingUp className="w-6 h-6" />}
           color="emerald"
           trend={{ value: "+21 vs yesterday", isPositive: true }}
         />
         <StatCard 
-          title="Hotspots" 
-          value="3" 
-          icon={<Flame className="w-5 h-5" />}
-          color="red"
+          title="Field Workers" 
+          value="23" 
+          icon={<Users className="w-6 h-6" />}
+          color="purple"
         />
       </div>
 
-      {/* Heatmap / Map */}
-      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden">
-        <div className="p-4 border-b border-white/10">
-          <h2 className="text-lg font-semibold text-white">Issue Heatmap - Zone East</h2>
-          <p className="text-sm text-slate-400 mt-1">Real-time density visualization</p>
+      {/* Zone Map */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-800">Zone Coverage Map</h2>
+          <p className="text-gray-600 mt-1">Real-time issue distribution across wards</p>
         </div>
-        <div className="h-[50vh]">
+        <div className="h-[400px]">
           <BaseMap heatmap />
         </div>
       </div>
 
-      {/* Ward Comparison */}
-      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">Ward Performance Comparison</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-white/10">
-                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-300">Ward</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-300">Active Issues</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-300">Resolved</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-300">SLA %</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-300">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {wardData.map((ward) => (
-                <tr key={ward.ward} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                  <td className="px-4 py-3 text-white font-semibold">{ward.ward}</td>
-                  <td className="px-4 py-3 text-orange-400">{ward.issues}</td>
-                  <td className="px-4 py-3 text-emerald-400">{ward.resolved}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-white/10 rounded-full h-2 max-w-[100px]">
-                        <div 
-                          className={`h-2 rounded-full ${
-                            ward.sla >= 85 ? 'bg-emerald-500' : ward.sla >= 70 ? 'bg-orange-500' : 'bg-red-500'
-                          }`}
-                          style={{ width: `${ward.sla}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-sm text-slate-300 font-semibold min-w-[40px]">{ward.sla}%</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      ward.sla >= 85 
-                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                        : ward.sla >= 70 
-                        ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
-                        : 'bg-red-500/20 text-red-400 border border-red-500/30'
-                    }`}>
-                      {ward.sla >= 85 ? 'Good' : ward.sla >= 70 ? 'Fair' : 'Poor'}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Ward Performance */}
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <h2 className="text-xl font-semibold text-gray-800 mb-6">Ward Performance Overview</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {wardData.map((ward) => (
+            <div key={ward.ward} className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-800">{ward.ward}</h3>
+                <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(ward.status)}`}>
+                  {ward.status}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-orange-600">{ward.issues}</div>
+                  <div className="text-sm text-gray-600">Active Issues</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-emerald-600">{ward.resolved}</div>
+                  <div className="text-sm text-gray-600">Resolved</div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex flex-wrap gap-3">
-        <Button className="bg-emerald-500 hover:bg-emerald-600">
-          <TrendingUp className="w-4 h-4 mr-2" />
-          Generate Zone Report
-        </Button>
-        <Button variant="outline" className="border-white/20 bg-white/5 hover:bg-white/10 text-white">
-          <Flame className="w-4 h-4 mr-2" />
-          View Hotspot Details
-        </Button>
-        <Button variant="outline" className="border-white/20 bg-white/5 hover:bg-white/10 text-white">
-          Compare Time Periods
-        </Button>
+      {/* Zone Actions */}
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <h2 className="text-xl font-semibold text-gray-800 mb-6">Zone Management</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-8 justify-start text-left">
+            <TrendingUp className="w-6 h-6 mr-4" />
+            <div>
+              <div className="font-semibold text-lg">Generate Zone Report</div>
+              <div className="text-sm opacity-90">Comprehensive analytics and insights</div>
+            </div>
+          </Button>
+          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-8 justify-start text-left">
+            <Image 
+              src="/VMC.webp" 
+              alt="VMC Logo" 
+              width={24} 
+              height={24} 
+              className="w-6 h-6 object-contain mr-4"
+            />
+            <div>
+              <div className="font-semibold text-lg">Ward Coordination</div>
+              <div className="text-sm opacity-90">Manage cross-ward operations</div>
+            </div>
+          </Button>
+        </div>
+      </div>
+
+      {/* Performance Metrics */}
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <h2 className="text-xl font-semibold text-gray-800 mb-6">Zone Performance Metrics</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center p-6 bg-emerald-50 rounded-lg border border-emerald-200">
+            <div className="text-3xl font-bold text-emerald-600 mb-2">87%</div>
+            <p className="text-gray-700 font-medium">Overall SLA Compliance</p>
+            <p className="text-sm text-gray-500">Above target (85%)</p>
+          </div>
+          <div className="text-center p-6 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="text-3xl font-bold text-blue-600 mb-2">3.2h</div>
+            <p className="text-gray-700 font-medium">Avg Resolution Time</p>
+            <p className="text-sm text-gray-500">Improved by 15%</p>
+          </div>
+          <div className="text-center p-6 bg-purple-50 rounded-lg border border-purple-200">
+            <div className="text-3xl font-bold text-purple-600 mb-2">92%</div>
+            <p className="text-gray-700 font-medium">Citizen Satisfaction</p>
+            <p className="text-sm text-gray-500">Excellent rating</p>
+          </div>
+        </div>
       </div>
     </div>
   );

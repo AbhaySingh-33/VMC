@@ -11,24 +11,26 @@ interface StatCardProps {
 
 export default function StatCard({ title, value, icon, trend, color = "blue" }: StatCardProps) {
   const colorClasses = {
-    emerald: "from-emerald-500/20 to-emerald-600/10 border-emerald-500/30 text-emerald-400",
-    blue: "from-blue-500/20 to-blue-600/10 border-blue-500/30 text-blue-400",
-    orange: "from-orange-500/20 to-orange-600/10 border-orange-500/30 text-orange-400",
-    red: "from-red-500/20 to-red-600/10 border-red-500/30 text-red-400",
-    purple: "from-purple-500/20 to-purple-600/10 border-purple-500/30 text-purple-400",
-    indigo: "from-indigo-500/20 to-indigo-600/10 border-indigo-500/30 text-indigo-400",
+    emerald: "bg-emerald-50 border-emerald-200 text-emerald-600",
+    blue: "bg-blue-50 border-blue-200 text-blue-600",
+    orange: "bg-orange-50 border-orange-200 text-orange-600",
+    red: "bg-red-50 border-red-200 text-red-600",
+    purple: "bg-purple-50 border-purple-200 text-purple-600",
+    indigo: "bg-indigo-50 border-indigo-200 text-indigo-600",
   };
 
   return (
-    <div className={`bg-linear-to-br ${colorClasses[color]} backdrop-blur-sm border rounded-xl p-4 transition-all duration-300 hover:scale-105 hover:shadow-lg`}>
-      <div className="flex items-start justify-between mb-2">
-        <h3 className="text-sm font-medium text-slate-300">{title}</h3>
-        {icon && <div className="opacity-60">{icon}</div>}
+    <div className={`${colorClasses[color]} border-2 rounded-xl p-6 shadow-sm hover:shadow-md transition-all`}>
+      <div className="flex items-start justify-between mb-3">
+        <h3 className="text-sm font-medium text-gray-600">{title}</h3>
+        {icon && <div className="opacity-70">{icon}</div>}
       </div>
-      <p className="text-3xl font-bold text-white mb-1">{value}</p>
+      <p className="text-3xl font-bold text-gray-800 mb-2">{value}</p>
       {trend && (
-        <p className={`text-xs ${trend.isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
-          {trend.isPositive ? '↑' : '↓'} {trend.value}
+        <p className={`text-sm font-medium ${
+          trend.isPositive ? 'text-emerald-600' : 'text-red-600'
+        }`}>
+          {trend.isPositive ? '↗' : '↘'} {trend.value}
         </p>
       )}
     </div>

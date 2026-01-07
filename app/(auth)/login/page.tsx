@@ -2,14 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MapPin, HardHat, Building2, Shield, Navigation, Lock, User, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { HardHat, Building2, Shield, User, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/lib/language-context";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 type UserRole = "FIELD_WORKER" | "WARD_ENGINEER" | "ZONE_OFFICER" | "SUPER_ADMIN" | null;
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [selectedRole, setSelectedRole] = useState<UserRole>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [credentials, setCredentials] = useState({
@@ -19,34 +24,30 @@ export default function LoginPage() {
 
   const roleInfo = {
     FIELD_WORKER: {
-      title: "Field Worker",
+      title: t('role.field.worker'),
       icon: <HardHat className="w-8 h-8" />,
-      color: "emerald",
-      description: "Report & capture on-ground issues"
+      description: t('role.field.worker.desc')
     },
     WARD_ENGINEER: {
-      title: "Ward Engineer",
+      title: t('role.ward.engineer'),
       icon: <Building2 className="w-8 h-8" />,
-      color: "blue",
-      description: "Monitor & verify ward activities"
+      description: t('role.ward.engineer.desc')
     },
     ZONE_OFFICER: {
-      title: "Zone Officer",
-      icon: <MapPin className="w-8 h-8" />,
-      color: "indigo",
-      description: "Oversee multi-ward operations"
+      title: t('role.zone.officer'),
+      icon: <Image src="/VMC.webp" alt="VMC" width={32} height={32} className="w-8 h-8 object-contain" />,
+      description: t('role.zone.officer.desc')
     },
     SUPER_ADMIN: {
-      title: "System Admin",
+      title: t('role.admin'),
       icon: <Shield className="w-8 h-8" />,
-      color: "purple",
-      description: "System-wide management"
+      description: t('role.admin.desc')
     }
   };
 
   function handleRoleSelect(role: UserRole) {
     setSelectedRole(role);
-    setCredentials({ username: "", password: "" }); // Reset credentials
+    setCredentials({ username: "", password: "" });
   }
 
   function handleFormLogin(e: React.FormEvent) {
@@ -63,178 +64,163 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-950 via-slate-900 to-emerald-950 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden opacity-10">
-        <div className="absolute top-20 left-20 w-64 h-64 bg-blue-500 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      </div>
-
-      <div className="max-w-5xl w-full relative z-10">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex justify-center mb-6">
-            <div className="bg-linear-to-br from-emerald-400 to-blue-500 p-4 rounded-2xl shadow-lg shadow-emerald-500/20">
-              <Navigation className="w-12 h-12 text-white" />
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Header />
+      
+      <main className="flex-1 flex items-center justify-center p-4">
+        <div className="max-w-4xl w-full">
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-6">
+              <div className="bg-blue-100 p-4 rounded-xl border-2 border-blue-200">
+                <Image 
+                  src="/VMC.webp" 
+                  alt="VMC Logo" 
+                  width={48} 
+                  height={48} 
+                  className="w-12 h-12 object-contain"
+                />
+              </div>
             </div>
+            <h1 className="text-4xl font-bold text-gray-800 mb-3">
+              {t('app.title')}
+            </h1>
+            <p className="text-gray-600 text-lg">
+              {!selectedRole 
+                ? t('login.select.role')
+                : `${t('login.signin.as')} ${roleInfo[selectedRole].title}`}
+            </p>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-3">
-            VMC Civic Portal
-          </h1>
-          <p className="text-slate-300 text-lg">
-            {!selectedRole 
-              ? "Select your role to continue"
-              : `Sign in as ${roleInfo[selectedRole].title}`}
-          </p>
-        </div>
 
-        {!selectedRole ? (
-          /* Step 1: Role Selection */
-          <>
+          {!selectedRole ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <RoleCard
                 icon={<HardHat className="w-8 h-8" />}
-                title="Field Worker"
-                description="Report & capture on-ground issues"
-                color="emerald"
+                title={t('role.field.worker')}
+                description={t('role.field.worker.desc')}
                 onClick={() => handleRoleSelect("FIELD_WORKER")}
+                bgColor="bg-yellow-50 border-yellow-200"
               />
               
               <RoleCard
                 icon={<Building2 className="w-8 h-8" />}
-                title="Ward Engineer"
-                description="Monitor & verify ward activities"
-                color="blue"
+                title={t('role.ward.engineer')}
+                description={t('role.ward.engineer.desc')}
                 onClick={() => handleRoleSelect("WARD_ENGINEER")}
+                bgColor="bg-gray-100 border-gray-300"
               />
               
               <RoleCard
-                icon={<MapPin className="w-8 h-8" />}
-                title="Zone Officer"
-                description="Oversee multi-ward operations"
-                color="indigo"
+                icon={<Image src="/VMC.webp" alt="VMC" width={32} height={32} className="w-8 h-8 object-contain" />}
+                title={t('role.zone.officer')}
+                description={t('role.zone.officer.desc')}
                 onClick={() => handleRoleSelect("ZONE_OFFICER")}
+                bgColor="bg-white border-gray-200"
               />
               
               <RoleCard
                 icon={<Shield className="w-8 h-8" />}
-                title="Admin"
-                description="System-wide management"
-                color="purple"
+                title={t('role.admin')}
+                description={t('role.admin.desc')}
                 onClick={() => handleRoleSelect("SUPER_ADMIN")}
+                bgColor="bg-yellow-50 border-yellow-200"
               />
             </div>
-          </>
-        ) : (
-          /* Step 2: Login Form for Selected Role */
-          <div className="max-w-md mx-auto">
-            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl">
-              {/* Role Badge */}
-              <div className="flex items-center justify-center gap-3 mb-8 p-4 bg-white/5 rounded-xl border border-white/10">
-                <div className={`text-${roleInfo[selectedRole].color}-400`}>
-                  {roleInfo[selectedRole].icon}
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">
-                    {roleInfo[selectedRole].title}
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    {roleInfo[selectedRole].description}
-                  </p>
-                </div>
-              </div>
-
-              <form onSubmit={handleFormLogin} className="space-y-6">
-                {/* Username Field */}
-                <div className="space-y-2">
-                  <label htmlFor="username" className="text-sm font-medium text-slate-200 flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    Username or Employee ID
-                  </label>
-                  <Input
-                    id="username"
-                    type="text"
-                    placeholder="Enter your username"
-                    value={credentials.username}
-                    onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 focus:border-emerald-400 focus:ring-emerald-400/20"
-                    required
-                    autoFocus
-                  />
-                </div>
-
-                {/* Password Field */}
-                <div className="space-y-2">
-                  <label htmlFor="password" className="text-sm font-medium text-slate-200 flex items-center gap-2">
-                    <Lock className="w-4 h-4" />
-                    Password
-                  </label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      value={credentials.password}
-                      onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                      className="bg-white/10 border-white/20 text-white placeholder:text-slate-400 focus:border-emerald-400 focus:ring-emerald-400/20 pr-10"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+          ) : (
+            <div className="max-w-md mx-auto">
+              <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
+                <div className="flex items-center justify-center gap-3 mb-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="text-blue-600">
+                    {roleInfo[selectedRole].icon}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-800">
+                      {roleInfo[selectedRole].title}
+                    </h3>
+                    <p className="text-xs text-gray-600">
+                      {roleInfo[selectedRole].description}
+                    </p>
                   </div>
                 </div>
 
-                {/* Remember Me & Forgot Password */}
-                <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="rounded border-white/20 bg-white/10 text-emerald-500 focus:ring-emerald-500/20" 
+                <form onSubmit={handleFormLogin} className="space-y-6">
+                  <div className="space-y-2">
+                    <label htmlFor="username" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      {t('login.username')}
+                    </label>
+                    <Input
+                      id="username"
+                      type="text"
+                      placeholder={t('login.username')}
+                      value={credentials.username}
+                      onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                      className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400"
+                      required
+                      autoFocus
                     />
-                    Remember me
-                  </label>
-                  <button type="button" className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors">
-                    Forgot password?
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="password" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                      <Shield className="w-4 h-4" />
+                      {t('login.password')}
+                    </label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder={t('login.password')}
+                        value={credentials.password}
+                        onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                        className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 pr-10"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300 bg-white text-blue-600" 
+                      />
+                      {t('login.remember')}
+                    </label>
+                    <button type="button" className="text-sm text-blue-600 hover:text-blue-700 transition-colors">
+                      {t('login.forgot')}
+                    </button>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3"
+                  >
+                    {t('login.signin')}
+                  </Button>
+
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    className="w-full flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors pt-4 border-t border-gray-200"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    {t('login.change.role')}
                   </button>
-                </div>
-
-                {/* Login Button */}
-                <Button
-                  type="submit"
-                  className="w-full bg-linear-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-6 rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-300 hover:shadow-emerald-500/40 hover:scale-105"
-                >
-                  Sign In
-                </Button>
-
-                {/* Back Button */}
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  className="w-full flex items-center justify-center gap-2 text-sm text-slate-400 hover:text-white transition-colors pt-4 border-t border-white/10"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Change Role
-                </button>
-              </form>
+                </form>
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* Footer Info */}
-        <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-6 py-3">
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-            <span className="text-sm text-slate-300">
-              Offline-first PWA • GPS mandatory for field operations
-            </span>
-          </div>
+          )}
         </div>
-      </div>
+      </main>
+      
+      <Footer />
     </div>
   );
 }
@@ -243,42 +229,25 @@ interface RoleCardProps {
   icon: React.ReactNode;
   title: string;
   description: string;
-  color: "emerald" | "blue" | "indigo" | "purple";
   onClick: () => void;
+  bgColor?: string;
 }
 
-function RoleCard({ icon, title, description, color, onClick }: RoleCardProps) {
-  const colorClasses = {
-    emerald: "from-emerald-500/20 to-emerald-600/10 border-emerald-500/30 hover:border-emerald-400/50 text-emerald-400 hover:shadow-emerald-500/20",
-    blue: "from-blue-500/20 to-blue-600/10 border-blue-500/30 hover:border-blue-400/50 text-blue-400 hover:shadow-blue-500/20",
-    indigo: "from-indigo-500/20 to-indigo-600/10 border-indigo-500/30 hover:border-indigo-400/50 text-indigo-400 hover:shadow-indigo-500/20",
-    purple: "from-purple-500/20 to-purple-600/10 border-purple-500/30 hover:border-purple-400/50 text-purple-400 hover:shadow-purple-500/20",
-  };
-
+function RoleCard({ icon, title, description, onClick, bgColor = "bg-white border-gray-200" }: RoleCardProps) {
   return (
     <button
       onClick={onClick}
-      className={`
-        group relative bg-linear-to-br ${colorClasses[color]}
-        backdrop-blur-sm border rounded-2xl p-6
-        hover:scale-105 transition-all duration-300 hover:shadow-2xl
-        text-left
-      `}
+      className={`${bgColor} border rounded-lg p-6 hover:shadow-md hover:border-blue-300 transition-all text-left group`}
     >
-      <div className="mb-4 transition-transform duration-300 group-hover:scale-110">
+      <div className="mb-4 text-blue-600 group-hover:scale-110 transition-transform">
         {icon}
       </div>
-      <h3 className="text-xl font-bold text-white mb-2">
+      <h3 className="text-lg font-bold text-gray-800 mb-2">
         {title}
       </h3>
-      <p className="text-sm text-slate-300">
+      <p className="text-sm text-gray-600">
         {description}
       </p>
-      
-      {/* Hover indicator */}
-      <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-        <div className="w-2 h-2 bg-white rounded-full"></div>
-      </div>
     </button>
   );
 }
