@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Camera, Save, Send, X, CheckCircle, Lightbulb } from "lucide-react";
+import { Camera, Save, Send, X, CheckCircle, Lightbulb, MapPin } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -15,12 +15,14 @@ interface IssueReportProps {
 }
 
 const ISSUE_TYPES = [
-  { id: "pothole", icon: "🕳️" },
-  { id: "garbage", icon: "🗑️" },
-  { id: "drainage", icon: "🌊" },
-  { id: "streetlight", icon: "💡" },
-  { id: "road", icon: "🛣️" },
-  { id: "water", icon: "💧" },
+  { id: "pothole", icon: "🕳️", priority: "high" },
+  { id: "garbage", icon: "🗑️", priority: "medium" },
+  { id: "drainage", icon: "🌊", priority: "high" },
+  { id: "streetlight", icon: "💡", priority: "medium" },
+  { id: "road", icon: "🛣️", priority: "high" },
+  { id: "water", icon: "💧", priority: "critical" },
+  { id: "manhole", icon: "⚠️", priority: "critical" },
+  { id: "cattle", icon: "🐄", priority: "medium" },
 ];
 
 export default function IssueReport({ onClose, onSave }: IssueReportProps) {
@@ -28,28 +30,20 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
   const [step, setStep] = useState(1);
   const [selectedType, setSelectedType] = useState<string>("");
   const [photos, setPhotos] = useState<string[]>([]);
-  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [location, setLocation] = useState<{ lat: number; lng: number; accuracy?: number } | null>(null);
   const [description, setDescription] = useState("");
   const [isCapturingLocation, setIsCapturingLocation] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis | null>(null);
   const [ward, setWard] = useState<string>("");
+  const [employeeId, setEmployeeId] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     offlineStorage.initializeWards();
+    const storedEmployeeId = localStorage.getItem('employeeId') || 'FW001';
+    setEmployeeId(storedEmployeeId);
   }, []);
-
-  useEffect(() => {
-    if (selectedType || photos.length > 0) {
-      const analysis = aiSuggestions.analyzeIssue(
-        photos[0], 
-        location || undefined, 
-        selectedType
-      );
-      setAiAnalysis(analysis);
-    }
-  }, [selectedType, photos, location]);
 
   const captureLocation = () => {
     setIsCapturingLocation(true);
@@ -59,6 +53,7 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
           const newLocation = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
+            accuracy: position.coords.accuracy,
           };
           setLocation(newLocation);
           
@@ -66,7 +61,7 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
             newLocation.lat, 
             newLocation.lng
           );
-          setWard(detectedWard?.name || "Unknown Ward");
+          setWard(detectedWard?.name || "Ward Detection Failed");
           
           setIsCapturingLocation(false);
         },
@@ -75,7 +70,7 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
           alert(t('issue.location.error'));
           setIsCapturingLocation(false);
         },
-        { enableHighAccuracy: true, timeout: 10000 }
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );
     }
   };
@@ -83,6 +78,12 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
   const handlePhotoCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Photo size too large. Please use a smaller image.');
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onload = (e) => {
         const base64 = e.target?.result as string;
@@ -97,24 +98,25 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
   };
 
   const handleSave = async (asDraft = false) => {
-    if (!selectedType || !location) {
-      alert(t('issue.fill.required'));
+    if (!selectedType || !location || photos.length === 0) {
+      alert('Please complete all required fields: Issue type, location, and at least one photo.');
       return;
     }
 
     setIsSaving(true);
     
     try {
+      const issueType = ISSUE_TYPES.find(t => t.id === selectedType);
       const issue: Omit<CivicIssue, 'id'> = {
         type: selectedType,
-        description: description || aiAnalysis?.description || "No description provided",
+        description: description || `${selectedType} reported by field worker`,
         location,
         ward: ward || "Unknown Ward",
         photos,
         timestamp: new Date(),
-        reportedBy: "Field Worker",
+        reportedBy: employeeId,
         status: asDraft ? 'draft' : 'pending_sync',
-        priority: aiAnalysis?.priority || 'medium',
+        priority: (issueType?.priority as any) || 'medium',
         aiSuggestion: aiAnalysis?.description
       };
 
@@ -134,11 +136,11 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
 
   return (
     <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-slate-800 border-slate-700 max-h-[90vh] overflow-y-auto">
+      <Card className="w-full max-w-md bg-white border-gray-200 max-h-[90vh] overflow-y-auto">
         <div className="p-6 space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-white">
+            <h2 className="text-xl font-bold text-gray-800">
               {t('issue.report.title')}
             </h2>
             <Button variant="ghost" size="sm" onClick={onClose}>
@@ -152,7 +154,7 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
               <div
                 key={num}
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                  step >= num ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-slate-400'
+                  step >= num ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
                 }`}
               >
                 {step > num ? <CheckCircle className="w-4 h-4" /> : num}
@@ -163,7 +165,7 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
           {/* Step 1: Issue Type */}
           {step === 1 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">
+              <h3 className="text-lg font-semibold text-gray-800">
                 {t('issue.select.type')}
               </h3>
               <div className="grid grid-cols-2 gap-3">
@@ -173,47 +175,29 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                     onClick={() => setSelectedType(type.id)}
                     className={`p-4 rounded-lg border-2 transition-all ${
                       selectedType === type.id
-                        ? 'border-emerald-500 bg-emerald-600/20'
-                        : 'border-slate-600 bg-slate-700 hover:border-slate-500'
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 bg-white hover:border-gray-300'
                     }`}
                   >
                     <div className="text-2xl mb-2">{type.icon}</div>
-                    <div className="text-sm font-medium text-white text-center">
+                    <div className="text-sm font-medium text-gray-800 text-center">
                       {t(`issue.type.${type.id}`)}
+                    </div>
+                    <div className={`text-xs mt-1 px-2 py-1 rounded ${
+                      type.priority === 'critical' ? 'bg-red-100 text-red-700' :
+                      type.priority === 'high' ? 'bg-orange-100 text-orange-700' :
+                      'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {type.priority.toUpperCase()}
                     </div>
                   </button>
                 ))}
               </div>
               
-              {/* AI Suggestion */}
-              {aiAnalysis && selectedType && (
-                <div className="bg-blue-600/20 border border-blue-500 rounded-lg p-4">
-                  <div className="flex items-start gap-2">
-                    <Lightbulb className="w-5 h-5 text-blue-400 mt-0.5" />
-                    <div>
-                      <h4 className="text-sm font-semibold text-blue-400 mb-1">
-                        {t('issue.ai.suggestion')}
-                      </h4>
-                      <p className="text-xs text-slate-300">
-                        {aiAnalysis.description}
-                      </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className={`text-xs px-2 py-1 rounded ${aiSuggestions.getPriorityColor(aiAnalysis.priority)}`}>
-                          {aiAnalysis.priority.toUpperCase()}
-                        </span>
-                        <span className="text-xs text-slate-400">
-                          {t('issue.estimated.time')}: {aiAnalysis.estimatedResolutionTime}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
               <Button
                 onClick={() => setStep(2)}
                 disabled={!selectedType}
-                className="w-full bg-emerald-600 hover:bg-emerald-700"
+                className="w-full bg-blue-600 hover:bg-blue-700"
               >
                 {t('next')}
               </Button>
@@ -223,7 +207,7 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
           {/* Step 2: Location & Photos */}
           {step === 2 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">
+              <h3 className="text-lg font-semibold text-gray-800">
                 {t('issue.location.photos')}
               </h3>
               
@@ -233,16 +217,10 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                   onClick={captureLocation}
                   disabled={isCapturingLocation}
                   className={`w-full ${
-                    location ? 'bg-emerald-600' : 'bg-blue-600'
-                  } hover:opacity-90`}
+                    location ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
                 >
-                  <Image 
-                    src="/VMC.webp" 
-                    alt="VMC Logo" 
-                    width={16} 
-                    height={16} 
-                    className="w-4 h-4 object-contain mr-2"
-                  />
+                  <MapPin className="w-4 h-4 mr-2" />
                   {isCapturingLocation 
                     ? t('issue.getting.location')
                     : location 
@@ -250,14 +228,19 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                     : t('issue.get.location')
                   }
                 </Button>
-                {location && ward && (
-                  <div className="bg-slate-700 p-3 rounded-lg">
-                    <div className="text-xs text-slate-400">
+                {location && (
+                  <div className="bg-green-50 border border-green-200 p-3 rounded-lg">
+                    <div className="text-xs text-gray-600">
                       📍 {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
                     </div>
-                    <div className="text-sm text-emerald-400 font-medium">
-                      🏛️ {ward}
+                    <div className="text-xs text-gray-500">
+                      Accuracy: ±{location.accuracy?.toFixed(0)}m
                     </div>
+                    {ward && (
+                      <div className="text-sm text-green-700 font-medium mt-1">
+                        🏛️ {ward}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -275,10 +258,10 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                 <Button
                   onClick={() => fileInputRef.current?.click()}
                   variant="outline"
-                  className="w-full border-slate-600 bg-slate-700 text-white hover:bg-slate-600"
+                  className="w-full border-gray-300 bg-white text-gray-800 hover:bg-gray-50"
                 >
                   <Camera className="w-4 h-4 mr-2" />
-                  {t('issue.take.photo')} ({photos.length})
+                  {t('issue.take.photo')} ({photos.length}/3)
                 </Button>
                 
                 {photos.length > 0 && (
@@ -288,7 +271,7 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                         <img
                           src={photo}
                           alt={`Photo ${index + 1}`}
-                          className="w-full h-20 object-cover rounded border border-slate-600"
+                          className="w-full h-20 object-cover rounded border border-gray-200"
                         />
                         <button
                           onClick={() => removePhoto(index)}
@@ -306,14 +289,14 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                 <Button
                   onClick={() => setStep(1)}
                   variant="outline"
-                  className="flex-1 border-slate-600 bg-slate-700 text-white"
+                  className="flex-1 border-gray-300 bg-white text-gray-800"
                 >
                   {t('back')}
                 </Button>
                 <Button
                   onClick={() => setStep(3)}
-                  disabled={!location}
-                  className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+                  disabled={!location || photos.length === 0}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700"
                 >
                   {t('next')}
                 </Button>
@@ -324,59 +307,39 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
           {/* Step 3: Description & Submit */}
           {step === 3 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">
+              <h3 className="text-lg font-semibold text-gray-800">
                 {t('issue.description.submit')}
               </h3>
               
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder={aiAnalysis?.description || t('issue.description.optional')}
-                className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder:text-slate-400 resize-none"
+                placeholder={t('issue.description.optional')}
+                className="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-800 placeholder:text-gray-400 resize-none"
                 rows={3}
               />
 
-              {/* AI Analysis Summary */}
-              {aiAnalysis && (
-                <div className="bg-slate-700 p-4 rounded-lg space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Lightbulb className="w-4 h-4 text-blue-400" />
-                    <span className="text-sm font-semibold text-blue-400">
-                      {t('issue.ai.suggestion')}
-                    </span>
-                  </div>
-                  <div className="text-xs text-slate-300">
-                    {aiAnalysis.description}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs px-2 py-1 rounded ${aiSuggestions.getPriorityColor(aiAnalysis.priority)}`}>
-                      {t('issue.priority')}: {aiAnalysis.priority.toUpperCase()}
-                    </span>
-                    <span className="text-xs text-slate-400">
-                      {t('issue.estimated.time')}: {aiAnalysis.estimatedResolutionTime}
-                    </span>
-                  </div>
-                </div>
-              )}
-
               {/* Summary */}
-              <div className="bg-slate-700 p-4 rounded-lg space-y-2">
+              <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">
                     {ISSUE_TYPES.find(t => t.id === selectedType)?.icon}
                   </span>
-                  <span className="text-white font-medium">
+                  <span className="text-gray-800 font-medium">
                     {t(`issue.type.${selectedType}`)}
                   </span>
                 </div>
-                <div className="text-sm text-slate-400">
-                  📍 {t('issue.location')}: {location ? "Captured" : "Not captured"}
+                <div className="text-sm text-gray-600">
+                  📍 {t('issue.location')}: {location ? "✓ Captured" : "✗ Missing"}
                 </div>
-                <div className="text-sm text-slate-400">
+                <div className="text-sm text-gray-600">
                   📷 {t('issue.photos')}: {photos.length}
                 </div>
+                <div className="text-sm text-gray-600">
+                  👤 Employee: {employeeId}
+                </div>
                 {ward && (
-                  <div className="text-sm text-emerald-400">
+                  <div className="text-sm text-blue-600">
                     🏛️ {t('issue.ward')}: {ward}
                   </div>
                 )}
@@ -386,7 +349,7 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                 <Button
                   onClick={() => setStep(2)}
                   variant="outline"
-                  className="flex-1 border-slate-600 bg-slate-700 text-white"
+                  className="flex-1 border-gray-300 bg-white text-gray-800"
                 >
                   {t('back')}
                 </Button>
@@ -394,7 +357,7 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                   onClick={() => handleSave(true)}
                   disabled={isSaving}
                   variant="outline"
-                  className="flex-1 border-blue-600 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30"
+                  className="flex-1 border-yellow-500 bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
                 >
                   <Save className="w-4 h-4 mr-1" />
                   {t('draft')}
@@ -402,18 +365,10 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                 <Button
                   onClick={() => handleSave(false)}
                   disabled={isSaving}
-                  className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+                  className="flex-1 bg-green-600 hover:bg-green-700"
                 >
                   <Send className="w-4 h-4 mr-1" />
-                  {isSaving ? (
-                    <Image 
-                      src="/VMC.webp" 
-                      alt="Loading" 
-                      width={12} 
-                      height={12} 
-                      className="w-3 h-3 object-contain animate-pulse"
-                    />
-                  ) : t('send')}
+                  {t('send')}
                 </Button>
               </div>
             </div>

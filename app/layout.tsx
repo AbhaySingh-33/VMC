@@ -6,13 +6,19 @@ export const metadata = {
   title: "VMC CiviSense - Civic Issue Monitoring",
   description: "AI-Based Geo-Fenced Civic Issue Monitoring System for Vadodara Municipal Corporation",
   manifest: "/manifest.json",
-  themeColor: "#10b981",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "VMC CiviSense"
   }
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#1e40af"
 };
 
 export default function RootLayout({
@@ -24,13 +30,13 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#10b981" />
+        <meta name="theme-color" content="#1e40af" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="VMC CiviSense" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
-      <body className="bg-slate-900 text-white">
+      <body className="bg-gray-50 text-gray-800">
         <LanguageProvider>
           {children}
           <PWAInstaller />

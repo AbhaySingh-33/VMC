@@ -14,6 +14,7 @@ import { useLanguage } from "@/lib/language-context";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ImageCarousel from "@/components/ImageCarousel";
+import GovernmentCompliance from "@/components/GovernmentCompliance";
 
 function VadodaraInfo() {
   const [selectedInfo, setSelectedInfo] = useState("Smart City Initiatives");
@@ -180,7 +181,7 @@ export default function HomePage() {
           </div>
 
           {/* About Vadodara Section */}
-          <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
+          <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm mb-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <h3 className="text-2xl font-bold mb-2 text-blue-800">About Our Vadodara</h3>
@@ -198,6 +199,9 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+
+          {/* Government Compliance Section */}
+          <GovernmentCompliance />
         </div>
       </main>
       

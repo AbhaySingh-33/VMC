@@ -4,8 +4,8 @@
   "description": "AI-Based Geo-Fenced Civic Issue Monitoring System for Vadodara Municipal Corporation",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#10b981",
+  "background_color": "#f9fafb",
+  "theme_color": "#1e40af",
   "orientation": "portrait",
   "icons": [
     {

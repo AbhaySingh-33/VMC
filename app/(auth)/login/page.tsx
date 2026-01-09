@@ -54,7 +54,25 @@ export default function LoginPage() {
     e.preventDefault();
     if (selectedRole) {
       localStorage.setItem("role", selectedRole);
-      router.push("/dashboard");
+      localStorage.setItem("employeeId", credentials.username || "DEMO_USER");
+      
+      // Route based on role
+      switch(selectedRole) {
+        case "FIELD_WORKER":
+          router.push("/field-worker");
+          break;
+        case "WARD_ENGINEER":
+          router.push("/ward-engineer");
+          break;
+        case "ZONE_OFFICER":
+          router.push("/zone-officer");
+          break;
+        case "SUPER_ADMIN":
+          router.push("/admin");
+          break;
+        default:
+          router.push("/dashboard");
+      }
     }
   }
 

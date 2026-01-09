@@ -1,13 +1,21 @@
-# PWA Icons Directory
+# PWA Icons
 
-This directory contains the Progressive Web App icons for CiviSense.
+This directory should contain the following icon files for the Progressive Web App:
 
-To generate proper icons, you can:
-1. Create a 512x512 PNG logo for VMC CiviSense
-2. Use tools like https://realfavicongenerator.net/ to generate all sizes
-3. Replace these placeholder files with actual icons
+- icon-72x72.png
+- icon-96x96.png  
+- icon-128x128.png
+- icon-144x144.png
+- icon-152x152.png
+- icon-192x192.png
+- icon-384x384.png
+- icon-512x512.png
 
-Required sizes:
-- 72x72, 96x96, 128x128, 144x144, 152x152, 192x192, 384x384, 512x512
+These icons should be generated from the VMC.webp logo to maintain consistent branding across all platforms.
 
-For now, the app will use the default favicon.ico as fallback.
+## Icon Requirements:
+- Use VMC.webp as the source
+- Maintain square aspect ratio
+- Use transparent or white background
+- Ensure visibility on both light and dark backgrounds
+- Follow PWA icon guidelines for maskable icons

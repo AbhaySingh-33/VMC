@@ -9,7 +9,7 @@ const images = [
   { src: "/random.jpeg", alt: "Vadodara City" },
   { src: "/circle.jpeg", alt: "Circle Area" },
   { src: "/Sursagar-Lake.jpg", alt: "Sursagar Lake" },
-  { src: "/akota bridge.jpeg", alt: "Akota Bridge" },
+  { src: "/bridge.jpeg", alt: "Bridge" },
   { src: "/Sayaji.jpg", alt: "Sayaji Garden" },
   { src: "/Laxmi Vilas Palace.jpg", alt: "Laxmi Vilas Palace" },
   { src: "/Vadodara.jpg", alt: "Vadodara" },
