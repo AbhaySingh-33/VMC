@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useLanguage } from "@/lib/language-context";
+import { SpeakableText } from "@/components/ui/SpeakableText";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ImageCarousel from "@/components/ImageCarousel";
@@ -41,7 +42,9 @@ function VadodaraInfo() {
                 : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-blue-50'
             } border`}
           >
-            <div className="font-medium text-sm">{key}</div>
+            <div className="font-medium text-sm">
+              <SpeakableText>{key}</SpeakableText>
+            </div>
           </button>
         ))}
       </div>
@@ -82,10 +85,12 @@ export default function HomePage() {
               {t('home.title')}
             </h1>
             <h2 className="text-xl font-semibold text-blue-600 mb-3">
-              {t('home.subtitle')}
+              <SpeakableText>{t('home.subtitle')}</SpeakableText>
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              AI-Based Geo-Fenced Civic Issue Monitoring System for field staff
+              <SpeakableText>
+                AI-Based Geo-Fenced Civic Issue Monitoring System for field staff
+              </SpeakableText>
             </p>
           </div>
 
@@ -132,7 +137,7 @@ export default function HomePage() {
           {/* Use Cases */}
           <div className="bg-white border border-gray-200 rounded-xl p-8 mb-12 shadow-sm">
             <h3 className="text-2xl font-bold text-center mb-8 text-blue-600">
-              Key Use Cases
+              <SpeakableText>Key Use Cases</SpeakableText>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <UseCaseItem 
@@ -175,7 +180,7 @@ export default function HomePage() {
                 href="/login"
                 className="inline-block bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg font-semibold transition-colors text-white"
               >
-                {t('home.login')}
+                <SpeakableText text="Login to System">{t('home.login')}</SpeakableText>
               </Link>
             </div>
           </div>
@@ -184,8 +189,12 @@ export default function HomePage() {
           <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm mb-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-2xl font-bold mb-2 text-blue-800">About Our Vadodara</h3>
-                <h4 className="text-lg font-semibold text-blue-700 mb-4">Sanskari Nagari</h4>
+                <h3 className="text-2xl font-bold mb-2 text-blue-800">
+                  <SpeakableText>About Our Vadodara</SpeakableText>
+                </h3>
+                <h4 className="text-lg font-semibold text-blue-700 mb-4">
+                  <SpeakableText>Sanskari Nagari</SpeakableText>
+                </h4>
                 <p className="text-gray-700 leading-relaxed mb-4">
                   Vadodara, also known as Baroda, is one of Gujarat's most vibrant cities — a blend of rich heritage, cultural diversity, and rapid urban development. Situated on the banks of the Vishwamitri River, it is renowned for its grand palaces, art museums, and educational institutions. Once the seat of the Gaekwad dynasty, Vadodara continues to reflect regal charm through its architecture and traditions.
                 </p>
@@ -224,8 +233,12 @@ function FeatureTile({
   return (
     <div className={`${bgColor} border rounded-lg p-6 hover:shadow-md transition-all`}>
       <div className="mb-4 text-blue-800">{icon}</div>
-      <h3 className="font-semibold mb-2 text-gray-800">{title}</h3>
-      <p className="text-sm text-gray-600">{desc}</p>
+      <h3 className="font-semibold mb-2 text-gray-800">
+        <SpeakableText>{title}</SpeakableText>
+      </h3>
+      <p className="text-sm text-gray-600">
+        <SpeakableText>{desc}</SpeakableText>
+      </p>
     </div>
   );
 }
@@ -243,7 +256,9 @@ function UseCaseItem({ emoji, text }: { emoji: string; text: string }) {
   return (
     <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
       <span className="text-xl">{emoji}</span>
-      <p className="text-sm text-gray-700">{text}</p>
+      <p className="text-sm text-gray-700">
+        <SpeakableText>{text}</SpeakableText>
+      </p>
     </div>
   );
 }

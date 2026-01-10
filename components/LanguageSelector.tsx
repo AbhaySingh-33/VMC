@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ChevronDown, Globe } from 'lucide-react';
 import { useLanguage } from '@/lib/language-context';
+import { SpeakableText } from '@/components/ui/SpeakableText';
 
 const languages = [
   { code: 'en', name: 'English', native: 'English' },
@@ -40,7 +41,11 @@ export default function LanguageSelector() {
                 language === lang.code ? 'bg-emerald-600 text-white' : 'text-slate-300'
               }`}
             >
-              <div className="font-medium">{lang.native}</div>
+              <div className="font-medium">
+                <SpeakableText language={lang.code as 'en' | 'hi' | 'gu'}>
+                  {lang.native}
+                </SpeakableText>
+              </div>
               <div className="text-xs opacity-75">{lang.name}</div>
             </button>
           ))}

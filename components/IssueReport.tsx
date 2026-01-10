@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { offlineStorage, CivicIssue } from "@/lib/offline-storage";
 import { aiSuggestions, AIAnalysis } from "@/lib/ai-suggestions";
+import { SpeakableText } from "@/components/ui/SpeakableText";
 import { useLanguage } from "@/lib/language-context";
 
 interface IssueReportProps {
@@ -181,7 +182,9 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                   >
                     <div className="text-2xl mb-2">{type.icon}</div>
                     <div className="text-sm font-medium text-gray-800 text-center">
-                      {t(`issue.type.${type.id}`)}
+                      <SpeakableText>
+                        {t(`issue.type.${type.id}`)}
+                      </SpeakableText>
                     </div>
                     <div className={`text-xs mt-1 px-2 py-1 rounded ${
                       type.priority === 'critical' ? 'bg-red-100 text-red-700' :
@@ -199,7 +202,7 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                 disabled={!selectedType}
                 className="w-full bg-blue-600 hover:bg-blue-700"
               >
-                {t('next')}
+                <SpeakableText text="Next">{t('next')}</SpeakableText>
               </Button>
             </div>
           )}
@@ -221,12 +224,14 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                   }`}
                 >
                   <MapPin className="w-4 h-4 mr-2" />
-                  {isCapturingLocation 
-                    ? t('issue.getting.location')
-                    : location 
-                    ? t('issue.location.captured')
-                    : t('issue.get.location')
-                  }
+                  <SpeakableText text={isCapturingLocation ? t('issue.getting.location') : location ? t('issue.location.captured') : t('issue.get.location')}>
+                    {isCapturingLocation 
+                      ? t('issue.getting.location')
+                      : location 
+                      ? t('issue.location.captured')
+                      : t('issue.get.location')
+                    }
+                  </SpeakableText>
                 </Button>
                 {location && (
                   <div className="bg-green-50 border border-green-200 p-3 rounded-lg">
@@ -261,7 +266,9 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                   className="w-full border-gray-300 bg-white text-gray-800 hover:bg-gray-50"
                 >
                   <Camera className="w-4 h-4 mr-2" />
-                  {t('issue.take.photo')} ({photos.length}/3)
+                  <SpeakableText text={`${t('issue.take.photo')} (${photos.length} of 3)`}>
+                    {t('issue.take.photo')} ({photos.length}/3)
+                  </SpeakableText>
                 </Button>
                 
                 {photos.length > 0 && (
@@ -360,7 +367,7 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                   className="flex-1 border-yellow-500 bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
                 >
                   <Save className="w-4 h-4 mr-1" />
-                  {t('draft')}
+                  <SpeakableText text="Save as Draft">{t('draft')}</SpeakableText>
                 </Button>
                 <Button
                   onClick={() => handleSave(false)}
@@ -368,7 +375,7 @@ export default function IssueReport({ onClose, onSave }: IssueReportProps) {
                   className="flex-1 bg-green-600 hover:bg-green-700"
                 >
                   <Send className="w-4 h-4 mr-1" />
-                  {t('send')}
+                  <SpeakableText text="Send Report">{t('send')}</SpeakableText>
                 </Button>
               </div>
             </div>

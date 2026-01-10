@@ -8,7 +8,14 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
+  getLanguageCode: () => string;
 }
+
+const LANGUAGE_CODES: Record<Language, string> = {
+  en: 'en-US',
+  hi: 'hi-IN',
+  gu: 'gu-IN',
+};
 
 const translations = {
   en: {
@@ -303,8 +310,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     return translations[language][key as keyof typeof translations[typeof language]] || key;
   };
 
+  const getLanguageCode = (): string => {
+    return LANGUAGE_CODES[language];
+  };
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t, getLanguageCode }}>
       {children}
     </LanguageContext.Provider>
   );
