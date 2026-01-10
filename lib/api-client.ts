@@ -4,7 +4,8 @@
  */
 
 // API Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+const ADMIN_BASE_URL = `${API_BASE_URL}/admin`;
 
 interface ApiResponse<T = any> {
   success: boolean;
@@ -62,6 +63,15 @@ async function apiRequest<T>(
   }
 }
 
+/**
+ * Get authentication headers with JWT token
+ */
+function getAuthHeaders(): HeadersInit {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+  return token ? { 'Authorization': `Bearer ${token}` } : {};
+}
+
+
 // ============================================
 // Authentication API Methods
 // ============================================
@@ -93,6 +103,94 @@ export interface ResetPasswordRequest {
 export interface ResetPasswordResponse {
   message: string;
 }
+
+// ============================================
+// Admin User Management Interfaces
+// ============================================
+
+export type UserRole = 'FIELD_WORKER' | 'WARD_ENGINEER' | 'ZONE_OFFICER' | 'SUPER_ADMIN';
+export type Department = 'ROAD' | 'STORM_WATER_DRAINAGE' | 'STREET_LIGHT' | 'GARBAGE';
+
+export interface Ward {
+  wardNumber: number;
+  name: string;
+}
+
+export interface Zone {
+  name: string;
+}
+
+export interface User {
+  id: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  role: UserRole;
+  department?: Department;
+  isActive: boolean;
+  wardId?: string;
+  zoneId?: string;
+  ward?: Ward;
+  zone?: Zone;
+  createdAt: string;
+}
+
+export interface UserStatistics {
+  user: {
+    id: string;
+    fullName: string;
+    role: UserRole;
+    isActive: boolean;
+  };
+  statistics: {
+    totalAssigned: number;
+    activeIssues: number;
+    resolvedIssues: number;
+    avgResolutionDays: number;
+    resolutionRate: number;
+  };
+}
+
+export interface ReassignmentIssue {
+  ticketNumber: string;
+  status: string;
+  priority: string;
+}
+
+export interface ReassignmentResult {
+  message: string;
+  reassignedCount: number;
+  fromUser: {
+    id: string;
+    fullName: string;
+    role: string;
+  };
+  toUser: {
+    id: string;
+    fullName: string;
+    role: string;
+  };
+  issues: ReassignmentIssue[];
+}
+
+export interface UserFilterParams {
+  role?: UserRole;
+  wardId?: string;
+  zoneId?: string;
+  isActive?: boolean;
+  department?: Department;
+}
+
+export interface UpdateUserData {
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+  role?: UserRole;
+  wardId?: string;
+  zoneId?: string;
+  department?: Department;
+}
+
 
 /**
  * Request OTP for password reset
@@ -133,12 +231,138 @@ export async function resetPassword(
   });
 }
 
+// ============================================
+// Admin User Management API Methods
+// ============================================
+
+/**
+ * Get all users (Super Admin only)
+ */
+export async function getAllUsers(): Promise<ApiResponse<User[]>> {
+  return apiRequest<User[]>(`${ADMIN_BASE_URL}/users`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+}
+
+/**
+ * Get user by ID (Super Admin only)
+ */
+export async function getUserById(userId: string): Promise<ApiResponse<User>> {
+  return apiRequest<User>(`${ADMIN_BASE_URL}/users/${userId}`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+}
+
+/**
+ * Update user details (Super Admin only)
+ */
+export async function updateUser(
+  userId: string,
+  data: UpdateUserData
+): Promise<ApiResponse<User>> {
+  return apiRequest<User>(`${ADMIN_BASE_URL}/users/${userId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
+    },
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Get filtered users for reassignment dropdown (Super Admin only)
+ */
+export async function getFilteredUsers(
+  filters: UserFilterParams
+): Promise<ApiResponse<User[]>> {
+  const queryParams = new URLSearchParams();
+  
+  if (filters.role) queryParams.append('role', filters.role);
+  if (filters.wardId) queryParams.append('wardId', filters.wardId);
+  if (filters.zoneId) queryParams.append('zoneId', filters.zoneId);
+  if (filters.isActive !== undefined) queryParams.append('isActive', String(filters.isActive));
+  if (filters.department) queryParams.append('department', filters.department);
+  
+  const queryString = queryParams.toString();
+  const endpoint = queryString 
+    ? `${ADMIN_BASE_URL}/users/filter/search?${queryString}`
+    : `${ADMIN_BASE_URL}/users/filter/search`;
+  
+  return apiRequest<User[]>(endpoint, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+}
+
+/**
+ * Reassign user's work to another user (Super Admin only)
+ */
+export async function reassignUserWork(
+  fromUserId: string,
+  toUserId: string
+): Promise<ApiResponse<ReassignmentResult>> {
+  return apiRequest<ReassignmentResult>(`${ADMIN_BASE_URL}/users/${fromUserId}/reassign`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
+    },
+    body: JSON.stringify({ toUserId }),
+  });
+}
+
+/**
+ * Get user statistics (Super Admin only)
+ */
+export async function getUserStatistics(
+  userId: string
+): Promise<ApiResponse<UserStatistics>> {
+  return apiRequest<UserStatistics>(`${ADMIN_BASE_URL}/users/${userId}/statistics`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+}
+
+/**
+ * Deactivate user (Super Admin only)
+ */
+export async function deactivateUser(userId: string): Promise<ApiResponse<User>> {
+  return apiRequest<User>(`${ADMIN_BASE_URL}/users/${userId}/deactivate`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(),
+  });
+}
+
+/**
+ * Reactivate user (Super Admin only)
+ */
+export async function reactivateUser(userId: string): Promise<ApiResponse<User>> {
+  return apiRequest<User>(`${ADMIN_BASE_URL}/users/${userId}/reactivate`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(),
+  });
+}
+
+
 // Export API client object for organized imports
 export const apiClient = {
   auth: {
     requestPasswordResetOtp,
     verifyOtp,
     resetPassword,
+  },
+  admin: {
+    getAllUsers,
+    getUserById,
+    updateUser,
+    getFilteredUsers,
+    reassignUserWork,
+    getUserStatistics,
+    deactivateUser,
+    reactivateUser,
   },
 };
 
