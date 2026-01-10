@@ -39,7 +39,7 @@ export default function Header({ showNavigation = false, onMenuClick }: HeaderPr
                   {t('app.title')}
                 </h1>
                 <p className="text-xs text-blue-50">
-                  Vadodara Municipal Corporation
+                  {t('header.tagline')}
                 </p>
               </div>
             </div>
@@ -51,7 +51,7 @@ export default function Header({ showNavigation = false, onMenuClick }: HeaderPr
                 size="sm"
                 onClick={() => setShowAccessibility(true)}
                 className="text-white hover:bg-white/10"
-                title="Accessibility Options"
+                title={t('header.accessibility')}
               >
                 <Eye className="w-4 h-4" />
               </Button>
@@ -79,16 +79,16 @@ export default function Header({ showNavigation = false, onMenuClick }: HeaderPr
             <div className="mt-3 pt-3 border-t border-white/10">
               <nav className="space-y-2">
                 <a href="/field-worker" className="block px-3 py-2 text-sm text-blue-50 hover:text-white hover:bg-white/10 rounded">
-                  Field Worker Dashboard
+                  {t('header.nav.field.worker')}
                 </a>
                 <a href="/ward-engineer" className="block px-3 py-2 text-sm text-blue-50 hover:text-white hover:bg-white/10 rounded">
-                  Ward Engineer Dashboard
+                  {t('header.nav.ward.engineer')}
                 </a>
                 <a href="/zone-officer" className="block px-3 py-2 text-sm text-blue-50 hover:text-white hover:bg-white/10 rounded">
-                  Zone Officer Dashboard
+                  {t('header.nav.zone.officer')}
                 </a>
                 <a href="/admin" className="block px-3 py-2 text-sm text-blue-50 hover:text-white hover:bg-white/10 rounded">
-                  Admin Dashboard
+                  {t('header.nav.admin')}
                 </a>
               </nav>
             </div>
