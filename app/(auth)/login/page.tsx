@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { HardHat, Building2, Shield, User, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
@@ -211,9 +212,12 @@ export default function LoginPage() {
                       />
                       {t('login.remember')}
                     </label>
-                    <button type="button" className="text-sm text-blue-600 hover:text-blue-700 transition-colors">
+                    <Link 
+                      href="/forgot-password"
+                      className="text-sm text-blue-600 hover:text-blue-700 transition-colors"
+                    >
                       {t('login.forgot')}
-                    </button>
+                    </Link>
                   </div>
 
                   <Button
