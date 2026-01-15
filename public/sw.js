@@ -3,9 +3,14 @@ const urlsToCache = [
   '/',
   '/login',
   '/field-worker',
+  '/ward-engineer',
+  '/zone-officer',
+  '/admin',
   '/manifest.json',
+  '/VMC.webp',
   '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/icons/icon-512x512.png',
+  '/globals.css'
 ];
 
 // Install event - cache resources

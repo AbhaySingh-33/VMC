@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 
 import ZoneOfficerTools from "@/components/zoneofficer/ZoneOfficerTools";
 
+import UserProfile from "@/components/shared/UserProfile";
+
 export default function ZoneOfficerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const wardData = [
@@ -55,10 +57,10 @@ export default function ZoneOfficerDashboard() {
               Overview
             </button>
             <button 
-              onClick={() => setActiveTab('management')}
-              className={`pb-2 px-1 ${activeTab === 'management' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
+              onClick={() => setActiveTab('profile')}
+              className={`pb-2 px-1 ${activeTab === 'profile' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
             >
-              Zone Management
+              Profile
             </button>
           </div>
         </div>
@@ -186,6 +188,7 @@ export default function ZoneOfficerDashboard() {
         )}
 
         {activeTab === 'management' && <ZoneOfficerTools />}
+        {activeTab === 'profile' && <UserProfile role="ZONE_OFFICER" />}
       </main>
     </div>
   );

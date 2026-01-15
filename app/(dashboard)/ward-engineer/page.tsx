@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 
 import WardEngineerTools from "@/components/wardengineer/WardEngineerTools";
 
+import UserProfile from "@/components/shared/UserProfile";
+
 export default function WardEngineerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   return (
@@ -38,10 +40,10 @@ export default function WardEngineerDashboard() {
               Overview
             </button>
             <button 
-              onClick={() => setActiveTab('tools')}
-              className={`pb-2 px-1 ${activeTab === 'tools' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
+              onClick={() => setActiveTab('profile')}
+              className={`pb-2 px-1 ${activeTab === 'profile' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
             >
-              Quality Control
+              Profile
             </button>
           </div>
         </div>
@@ -136,6 +138,7 @@ export default function WardEngineerDashboard() {
         )}
 
         {activeTab === 'tools' && <WardEngineerTools />}
+        {activeTab === 'profile' && <UserProfile role="WARD_ENGINEER" />}
       </main>
     </div>
   );

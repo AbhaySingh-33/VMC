@@ -12,6 +12,7 @@ import { offlineStorage } from "@/lib/offline-storage";
 import SmartFeatures from "@/components/fieldworker/SmartFeatures";
 import RouteOptimization from "@/components/fieldworker/RouteOptimization";
 import { useLanguage } from "@/lib/language-context";
+import UserProfile from "@/components/shared/UserProfile";
 
 export default function FieldWorkerDashboard() {
   const { t } = useLanguage();
@@ -226,10 +227,10 @@ export default function FieldWorkerDashboard() {
               Smart Tools
             </button>
             <button 
-              onClick={() => setActiveTab('route')}
-              className={`pb-2 px-1 text-sm ${activeTab === 'route' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
+              onClick={() => setActiveTab('profile')}
+              className={`pb-2 px-1 text-sm ${activeTab === 'profile' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
             >
-              Route Planning
+              Profile
             </button>
           </div>
         </div>
@@ -332,6 +333,7 @@ export default function FieldWorkerDashboard() {
         )}
 
         {activeTab === 'route' && <RouteOptimization />}
+        {activeTab === 'profile' && <UserProfile role="FIELD_WORKER" />}
       </main>
 
       {/* Modals */}

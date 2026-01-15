@@ -4,7 +4,6 @@ import { Menu, X, Eye } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { useLanguage } from "@/lib/language-context";
-import LanguageSelector from "@/components/LanguageSelector";
 import AccessibilityPanel from "@/components/AccessibilityPanel";
 import { Button } from "@/components/ui/button";
 
@@ -23,7 +22,6 @@ export default function Header({ showNavigation = false, onMenuClick }: HeaderPr
       <header className="bg-gradient-to-r from-blue-800 to-blue-900 shadow-lg sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo and Title */}
             <div className="flex items-center gap-3">
               <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                 <Image 
@@ -44,7 +42,6 @@ export default function Header({ showNavigation = false, onMenuClick }: HeaderPr
               </div>
             </div>
 
-            {/* Right Side */}
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
@@ -55,8 +52,6 @@ export default function Header({ showNavigation = false, onMenuClick }: HeaderPr
               >
                 <Eye className="w-4 h-4" />
               </Button>
-              
-              <LanguageSelector />
               
               {showNavigation && (
                 <Button
@@ -74,7 +69,6 @@ export default function Header({ showNavigation = false, onMenuClick }: HeaderPr
             </div>
           </div>
 
-          {/* Mobile Navigation Menu */}
           {showNavigation && isMenuOpen && (
             <div className="mt-3 pt-3 border-t border-white/10">
               <nav className="space-y-2">

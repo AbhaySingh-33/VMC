@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/language-context";
+import { authService } from "@/lib/auth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -17,8 +18,10 @@ export default function LoginPage() {
   const { t } = useLanguage();
   const [selectedRole, setSelectedRole] = useState<UserRole>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [credentials, setCredentials] = useState({
-    username: "",
+    email: "",
     password: ""
   });
 
@@ -47,38 +50,31 @@ export default function LoginPage() {
 
   function handleRoleSelect(role: UserRole) {
     setSelectedRole(role);
-    setCredentials({ username: "", password: "" });
+    setCredentials({ email: "", password: "" });
+    setError("");
   }
 
-  function handleFormLogin(e: React.FormEvent) {
+  async function handleFormLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (selectedRole) {
-      localStorage.setItem("role", selectedRole);
-      localStorage.setItem("employeeId", credentials.username || "DEMO_USER");
-      
-      // Route based on role
-      switch(selectedRole) {
-        case "FIELD_WORKER":
-          router.push("/field-worker");
-          break;
-        case "WARD_ENGINEER":
-          router.push("/ward-engineer");
-          break;
-        case "ZONE_OFFICER":
-          router.push("/zone-officer");
-          break;
-        case "SUPER_ADMIN":
-          router.push("/admin");
-          break;
-        default:
-          router.push("/dashboard");
-      }
+    setLoading(true);
+    setError("");
+    
+    const result = await authService.login(credentials.email, credentials.password);
+    
+    if (result.success && result.user) {
+      const dashboardUrl = authService.getDashboardUrl(result.user.role);
+      router.push(dashboardUrl);
+    } else {
+      setError(result.message || 'Login failed');
     }
+    
+    setLoading(false);
   }
 
   function handleBack() {
     setSelectedRole(null);
-    setCredentials({ username: "", password: "" });
+    setCredentials({ email: "", password: "" });
+    setError("");
   }
 
   return (
@@ -160,18 +156,24 @@ export default function LoginPage() {
                   </div>
                 </div>
 
+                {error && (
+                  <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                    {error}
+                  </div>
+                )}
+
                 <form onSubmit={handleFormLogin} className="space-y-6">
                   <div className="space-y-2">
-                    <label htmlFor="username" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                    <label htmlFor="email" className="text-sm font-medium text-gray-700 flex items-center gap-2">
                       <User className="w-4 h-4" />
-                      {t('login.username')}
+                      Email
                     </label>
                     <Input
-                      id="username"
-                      type="text"
-                      placeholder={t('login.username')}
-                      value={credentials.username}
-                      onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                      id="email"
+                      type="email"
+                      placeholder="Email"
+                      value={credentials.email}
+                      onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
                       className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400"
                       required
                       autoFocus
@@ -218,9 +220,17 @@ export default function LoginPage() {
 
                   <Button
                     type="submit"
+                    disabled={loading}
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3"
                   >
-                    {t('login.signin')}
+                    {loading ? (
+                      <>
+                        <img src="/VMC.webp" alt="Loading" className="w-4 h-4 animate-pulse mr-2" />
+                        Logging in...
+                      </>
+                    ) : (
+                      t('login.signin')
+                    )}
                   </Button>
 
                   <button

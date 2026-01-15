@@ -1,25 +1,9 @@
+"use client";
+
 import "./globals.css";
 import PWAInstaller from "@/components/PWAInstaller";
 import { LanguageProvider } from "@/lib/language-context";
-
-export const metadata = {
-  title: "VMC CiviSense - Civic Issue Monitoring",
-  description: "AI-Based Geo-Fenced Civic Issue Monitoring System for Vadodara Municipal Corporation",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "VMC CiviSense"
-  }
-};
-
-export const viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: "#1e40af"
-};
+import { useOfflineInit } from "@/lib/useOfflineInit";
 
 export default function RootLayout({
   children,
@@ -38,10 +22,16 @@ export default function RootLayout({
       </head>
       <body className="bg-gray-50 text-gray-800">
         <LanguageProvider>
+          <OfflineInitializer />
           {children}
           <PWAInstaller />
         </LanguageProvider>
       </body>
     </html>
   );
+}
+
+function OfflineInitializer() {
+  useOfflineInit();
+  return null;
 }
