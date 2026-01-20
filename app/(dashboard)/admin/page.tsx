@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { Users, FileText, Map, Layers, Settings, BarChart3, Plus, Shield, AlertTriangle, Clock, TrendingUp, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,12 @@ import { Card } from "@/components/ui/card";
 import SLAMonitoring from "@/components/admin/SLAMonitoring";
 import CommunicationHub from "@/components/admin/CommunicationHub";
 import AdvancedAnalytics from "@/components/admin/AdvancedAnalytics";
+import AdminOverview from "@/components/admin/AdminOverview";
+import SystemSettings from "@/components/admin/SystemSettings";
+import UserProfileView from "@/components/admin/UserProfileView";
+import UserEditModal from "@/components/admin/UserEditModal";
+import ReassignmentModal from "@/components/admin/ReassignmentModal";
+import DeactivationConfirmation from "@/components/admin/DeactivationConfirmation";
 import { offlineStorage } from "@/lib/offline-storage";
 import BaseMap from "@/components/maps/BaseMap";
 
@@ -21,6 +27,30 @@ export default function AdminDashboard() {
   const [newUser, setNewUser] = useState({ id: '', name: '', role: '', ward: '', zone: '', phone: '', email: '' });
   const [editingUser, setEditingUser] = useState<any>(null);
   const [viewingUser, setViewingUser] = useState<any>(null);
+  
+  // Modal states
+  const [showProfileView, setShowProfileView] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showReassignModal, setShowReassignModal] = useState(false);
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [userStats, setUserStats] = useState<any>(null);
+  const [deactivationAction, setDeactivationAction] = useState<'deactivate' | 'reactivate'>('deactivate');
+  
+  // Mock data for wards and zones
+  const wards = [
+    { id: 'W1', wardNumber: 1, name: 'Ward 1' },
+    { id: 'W2', wardNumber: 2, name: 'Ward 2' },
+    { id: 'W3', wardNumber: 3, name: 'Ward 3' },
+    { id: 'W4', wardNumber: 4, name: 'Ward 4' },
+    { id: 'W5', wardNumber: 5, name: 'Ward 5' }
+  ];
+  const zones = [
+    { id: 'ZA', name: 'Zone A' },
+    { id: 'ZB', name: 'Zone B' },
+    { id: 'ZC', name: 'Zone C' },
+    { id: 'ZD', name: 'Zone D' }
+  ];
 
   useEffect(() => {
     loadDashboardData();
@@ -88,6 +118,41 @@ export default function AdminDashboard() {
 
   const handleViewProfile = (user: any) => {
     setViewingUser(user);
+  };
+
+  const handleDeactivateUser = (user: any) => {
+    setDeactivationAction('deactivate');
+    setSelectedUser(user);
+    setShowDeactivateModal(true);
+  };
+
+  const handleReactivateUser = (user: any) => {
+    setDeactivationAction('reactivate');
+    setSelectedUser(user);
+    setShowDeactivateModal(true);
+  };
+
+  const handleUserUpdated = () => {
+    loadDashboardData(); // Reload data after user update
+    setShowEditModal(false);
+    setSelectedUser(null);
+  };
+
+  const handleReassignmentSuccess = () => {
+    loadDashboardData(); // Reload data after reassignment
+    setShowReassignModal(false);
+    setSelectedUser(null);
+  };
+
+  const handleDeactivationSuccess = () => {
+    loadDashboardData(); // Reload data after deactivation
+    setShowDeactivateModal(false);
+    setSelectedUser(null);
+  };
+
+  const handleNeedReassignment = () => {
+    setShowDeactivateModal(false);
+    setShowReassignModal(true);
   };
 
   const renderOverview = () => (
