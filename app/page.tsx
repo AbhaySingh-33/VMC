@@ -11,25 +11,27 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useLanguage } from "@/lib/language-context";
+import { SpeakableText } from "@/components/ui/SpeakableText";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ImageCarousel from "@/components/ImageCarousel";
 import GovernmentCompliance from "@/components/GovernmentCompliance";
 
 function VadodaraInfo() {
-  const [selectedInfo, setSelectedInfo] = useState("Smart City Initiatives");
+  const { t } = useLanguage();
+  const [selectedInfo, setSelectedInfo] = useState("smart.city");
   
   const infoData = {
-    "Smart City Initiatives": "Vadodara is part of the Smart Cities Mission, implementing digital infrastructure, intelligent traffic systems, and e-governance services to enhance urban living.",
-    "Cultural Heritage": "Home to landmarks like Lukshmi Vilas Palace and Sayaji Garden, Vadodara celebrates its royal legacy and vibrant festivals like Navratri with grandeur.",
-    "Citizen Services": "From online bill payments to complaint redressal, VMC provides easy access to essential municipal services through its digital platforms.",
-    "Sustainable Development": "Focused on green spaces, water management, and clean energy projects, Vadodara is actively working towards an eco-friendly urban future.",
-    "Industrial & Educational Hub": "With key industries and prestigious institutions like The Maharaja Sayajirao University, Vadodara is a center for economic and academic excellence."
+    "smart.city": { title: t('city.highlight.smart.city'), desc: t('city.highlight.smart.city.desc') },
+    "cultural": { title: t('city.highlight.cultural'), desc: t('city.highlight.cultural.desc') },
+    "citizen": { title: t('city.highlight.citizen'), desc: t('city.highlight.citizen.desc') },
+    "sustainable": { title: t('city.highlight.sustainable'), desc: t('city.highlight.sustainable.desc') },
+    "industrial": { title: t('city.highlight.industrial'), desc: t('city.highlight.industrial.desc') }
   };
 
   return (
     <div>
-      <h3 className="text-lg font-semibold text-blue-800 mb-4">City Highlights</h3>
+      <h3 className="text-lg font-semibold text-blue-800 mb-4">{t('city.highlights.title')}</h3>
       <div className="space-y-3 mb-4">
         {Object.keys(infoData).map((key) => (
           <button
@@ -41,13 +43,17 @@ function VadodaraInfo() {
                 : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-blue-50'
             } border`}
           >
-            <div className="font-medium text-sm">{key}</div>
+            <div className="font-medium text-sm">
+              <SpeakableText>{infoData[key as keyof typeof infoData].title}</SpeakableText>
+            </div>
           </button>
         ))}
       </div>
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="font-semibold text-blue-800 mb-2">{selectedInfo}</h4>
-        <p className="text-sm text-gray-700 leading-relaxed">{infoData[selectedInfo as keyof typeof infoData]}</p>
+        <h4 className="font-semibold text-blue-800 mb-2">{infoData[selectedInfo as keyof typeof infoData].title}</h4>
+        <p className="text-sm text-gray-700 leading-relaxed">
+          <SpeakableText>{infoData[selectedInfo as keyof typeof infoData].desc}</SpeakableText>
+        </p>
       </div>
     </div>
   );
@@ -82,10 +88,10 @@ export default function HomePage() {
               {t('home.title')}
             </h1>
             <h2 className="text-xl font-semibold text-blue-600 mb-3">
-              {t('home.subtitle')}
+              <SpeakableText>{t('home.subtitle')}</SpeakableText>
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              AI-Based Geo-Fenced Civic Issue Monitoring System for field staff
+              <SpeakableText>{t('home.description')}</SpeakableText>
             </p>
           </div>
 
@@ -132,32 +138,32 @@ export default function HomePage() {
           {/* Use Cases */}
           <div className="bg-white border border-gray-200 rounded-xl p-8 mb-12 shadow-sm">
             <h3 className="text-2xl font-bold text-center mb-8 text-blue-600">
-              Key Use Cases
+              <SpeakableText>{t('home.use.cases.title')}</SpeakableText>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <UseCaseItem 
                 emoji="🕳️" 
-                text="Detect potholes after monsoon inspections"
+                text={t('home.use.case.pothole')}
               />
               <UseCaseItem 
                 emoji="🗑️" 
-                text="Identify garbage accumulation hotspots"
+                text={t('home.use.case.garbage')}
               />
               <UseCaseItem 
                 emoji="🐄" 
-                text="Report stray cattle on roads"
+                text={t('home.use.case.cattle')}
               />
               <UseCaseItem 
                 emoji="⚠️" 
-                text="Flag open manholes or damaged roads"
+                text={t('home.use.case.manhole')}
               />
               <UseCaseItem 
                 emoji="⚡" 
-                text="Enable faster ward-wise issue resolution"
+                text={t('home.use.case.resolution')}
               />
               <UseCaseItem 
                 emoji="📸" 
-                text="Improve accountability with resolution proof"
+                text={t('home.use.case.accountability')}
               />
             </div>
           </div>
@@ -169,13 +175,13 @@ export default function HomePage() {
                 {t('login.title')}
               </h3>
               <p className="text-gray-600 mb-6">
-                Field Worker, Ward Engineer, Zone Officer or Admin
+                <SpeakableText>{t('login.role.description')}</SpeakableText>
               </p>
               <Link
                 href="/login"
                 className="inline-block bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg font-semibold transition-colors text-white"
               >
-                {t('home.login')}
+                <SpeakableText text="Login to System">{t('home.login')}</SpeakableText>
               </Link>
             </div>
           </div>
@@ -184,13 +190,17 @@ export default function HomePage() {
           <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm mb-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-2xl font-bold mb-2 text-blue-800">About Our Vadodara</h3>
-                <h4 className="text-lg font-semibold text-blue-700 mb-4">Sanskari Nagari</h4>
+                <h3 className="text-2xl font-bold mb-2 text-blue-800">
+                  <SpeakableText>{t('about.vadodara.title')}</SpeakableText>
+                </h3>
+                <h4 className="text-lg font-semibold text-blue-700 mb-4">
+                  <SpeakableText>{t('about.vadodara.subtitle')}</SpeakableText>
+                </h4>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  Vadodara, also known as Baroda, is one of Gujarat's most vibrant cities — a blend of rich heritage, cultural diversity, and rapid urban development. Situated on the banks of the Vishwamitri River, it is renowned for its grand palaces, art museums, and educational institutions. Once the seat of the Gaekwad dynasty, Vadodara continues to reflect regal charm through its architecture and traditions.
+                  <SpeakableText>{t('about.vadodara.para1')}</SpeakableText>
                 </p>
                 <p className="text-gray-700 leading-relaxed">
-                  Today, Vadodara stands as a fast-growing smart city, embracing digital governance, infrastructure modernization, and sustainable growth. With a strong industrial base, particularly in petrochemicals, engineering, and IT, the city also thrives as a hub for innovation and civic progress. Vadodara is not just a city — it's a progressive community where culture meets technology.
+                  <SpeakableText>{t('about.vadodara.para2')}</SpeakableText>
                 </p>
               </div>
               
@@ -224,8 +234,12 @@ function FeatureTile({
   return (
     <div className={`${bgColor} border rounded-lg p-6 hover:shadow-md transition-all`}>
       <div className="mb-4 text-blue-800">{icon}</div>
-      <h3 className="font-semibold mb-2 text-gray-800">{title}</h3>
-      <p className="text-sm text-gray-600">{desc}</p>
+      <h3 className="font-semibold mb-2 text-gray-800">
+        <SpeakableText>{title}</SpeakableText>
+      </h3>
+      <p className="text-sm text-gray-600">
+        <SpeakableText>{desc}</SpeakableText>
+      </p>
     </div>
   );
 }
@@ -243,7 +257,9 @@ function UseCaseItem({ emoji, text }: { emoji: string; text: string }) {
   return (
     <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
       <span className="text-xl">{emoji}</span>
-      <p className="text-sm text-gray-700">{text}</p>
+      <p className="text-sm text-gray-700">
+        <SpeakableText>{text}</SpeakableText>
+      </p>
     </div>
   );
 }

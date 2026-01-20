@@ -11,6 +11,8 @@ import Image from "next/image";
 import { offlineStorage } from "@/lib/offline-storage";
 import SmartFeatures from "@/components/fieldworker/SmartFeatures";
 import RouteOptimization from "@/components/fieldworker/RouteOptimization";
+
+import { SpeakableText } from "@/components/ui/SpeakableText";
 import { useLanguage } from "@/lib/language-context";
 import UserProfile from "@/components/shared/UserProfile";
 
@@ -92,7 +94,11 @@ export default function FieldWorkerDashboard() {
         // Store photo with timestamp for later reporting
         const reader = new FileReader();
         reader.onload = (event) => {
-          const photoData = {
+          const photoData: {
+            timestamp: Date;
+            photo: string;
+            location: { lat: number; lng: number } | null;
+          } = {
             timestamp: new Date(),
             photo: event.target?.result as string,
             location: null
@@ -213,25 +219,26 @@ export default function FieldWorkerDashboard() {
           )}
           
           {/* Tab Navigation */}
-          <div className="mt-4 flex gap-2 border-b">
+          <div className="mt-4 flex gap-2 border-b overflow-x-auto">
             <button 
               onClick={() => setActiveTab('dashboard')}
-              className={`pb-2 px-1 text-sm ${activeTab === 'dashboard' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
+              className={`pb-2 px-3 text-sm whitespace-nowrap ${activeTab === 'dashboard' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
             >
               Dashboard
             </button>
             <button 
               onClick={() => setActiveTab('smart')}
-              className={`pb-2 px-1 text-sm ${activeTab === 'smart' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
+              className={`pb-2 px-3 text-sm whitespace-nowrap ${activeTab === 'smart' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
             >
               Smart Tools
             </button>
             <button 
-              onClick={() => setActiveTab('profile')}
-              className={`pb-2 px-1 text-sm ${activeTab === 'profile' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
+              onClick={() => setActiveTab('route')}
+              className={`pb-2 px-1 text-sm ${activeTab === 'route' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600'}`}
             >
               Profile
             </button>
+
           </div>
         </div>
 
@@ -242,19 +249,19 @@ export default function FieldWorkerDashboard() {
             <div className="grid grid-cols-4 gap-3">
               <div className="bg-white border border-gray-200 rounded-lg p-3 text-center">
                 <p className="text-xl font-bold text-blue-600">{statistics.total}</p>
-                <p className="text-xs text-gray-600">Total</p>
+                <p className="text-xs text-gray-600"><SpeakableText>Total</SpeakableText></p>
               </div>
               <div className="bg-white border border-gray-200 rounded-lg p-3 text-center">
                 <p className="text-xl font-bold text-orange-600">{offlineIssues + draftIssues}</p>
-                <p className="text-xs text-gray-600">Pending</p>
+                <p className="text-xs text-gray-600"><SpeakableText>Pending</SpeakableText></p>
               </div>
               <div className="bg-white border border-gray-200 rounded-lg p-3 text-center">
                 <p className="text-xl font-bold text-green-600">{statistics.resolved}</p>
-                <p className="text-xs text-gray-600">Resolved</p>
+                <p className="text-xs text-gray-600"><SpeakableText>Resolved</SpeakableText></p>
               </div>
               <div className="bg-white border border-gray-200 rounded-lg p-3 text-center">
                 <p className="text-xl font-bold text-purple-600">{statistics.resolutionRate}%</p>
-                <p className="text-xs text-gray-600">Success</p>
+                <p className="text-xs text-gray-600"><SpeakableText>Success</SpeakableText></p>
               </div>
             </div>
 
@@ -272,7 +279,7 @@ export default function FieldWorkerDashboard() {
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 rounded-lg text-base"
               >
                 <Plus className="w-5 h-5 mr-2" />
-                Report New Issue
+                <SpeakableText text="Report New Issue">Report New Issue</SpeakableText>
               </Button>
 
               <div className="grid grid-cols-2 gap-3">
@@ -281,14 +288,14 @@ export default function FieldWorkerDashboard() {
                   className="py-4 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium"
                 >
                   <Camera className="w-4 h-4 mr-2" />
-                  Quick Photo
+                  <SpeakableText text="Quick Photo">Quick Photo</SpeakableText>
                 </Button>
                 <Button 
                   onClick={getLocationInfo}
                   className="py-4 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium"
                 >
                   <MapPin className="w-4 h-4 mr-2" />
-                  My Location
+                  <SpeakableText text="My Location">My Location</SpeakableText>
                 </Button>
               </div>
             </div>
@@ -300,7 +307,9 @@ export default function FieldWorkerDashboard() {
                 className="w-full py-4 rounded-lg bg-orange-600 hover:bg-orange-700 text-white font-medium"
               >
                 <List className="w-4 h-4 mr-2" />
-                View Saved Issues ({offlineIssues + draftIssues})
+                <SpeakableText text={`View Saved Issues (${offlineIssues + draftIssues})`}>
+                  View Saved Issues ({offlineIssues + draftIssues})
+                </SpeakableText>
               </Button>
             )}
 
@@ -333,7 +342,6 @@ export default function FieldWorkerDashboard() {
         )}
 
         {activeTab === 'route' && <RouteOptimization />}
-        {activeTab === 'profile' && <UserProfile role="FIELD_WORKER" />}
       </main>
 
       {/* Modals */}

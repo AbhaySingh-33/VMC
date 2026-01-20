@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Mic, MicOff, Camera, MapPin, Star, QrCode } from "lucide-react";
+import { SpeakableText } from "@/components/ui/SpeakableText";
 
 interface SmartFeaturesProps {
   onVoiceText: (text: string) => void;
@@ -101,7 +102,7 @@ export default function SmartFeatures({ onVoiceText, onPhotoCapture, onFeedback 
       <Card className="p-4">
         <h4 className="font-semibold mb-3 flex items-center gap-2">
           <Mic className="w-4 h-4" />
-          Voice Description
+          <SpeakableText>Voice Description</SpeakableText>
         </h4>
         <div className="flex gap-2 mb-3">
           <Button 
@@ -122,7 +123,7 @@ export default function SmartFeatures({ onVoiceText, onPhotoCapture, onFeedback 
       <Card className="p-4">
         <h4 className="font-semibold mb-3 flex items-center gap-2">
           <Camera className="w-4 h-4" />
-          Resolution Proof
+          <SpeakableText>Resolution Proof</SpeakableText>
         </h4>
         <div className="grid grid-cols-2 gap-2">
           <Button onClick={handleBeforeAfterPhoto} variant="outline">
@@ -137,11 +138,11 @@ export default function SmartFeatures({ onVoiceText, onPhotoCapture, onFeedback 
       <Card className="p-4">
         <h4 className="font-semibold mb-3 flex items-center gap-2">
           <QrCode className="w-4 h-4" />
-          Equipment & Materials
+          <SpeakableText>Equipment & Materials</SpeakableText>
         </h4>
         <div className="space-y-2">
           <Button onClick={handleBarcodeScan} variant="outline" className="w-full">
-            📱 Scan Equipment Barcode
+            <SpeakableText text="Scan Equipment Barcode">📱 Scan Equipment Barcode</SpeakableText>
           </Button>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="p-2 bg-gray-50 rounded">
@@ -161,14 +162,14 @@ export default function SmartFeatures({ onVoiceText, onPhotoCapture, onFeedback 
       <Card className="p-4">
         <h4 className="font-semibold mb-3 flex items-center gap-2">
           <Star className="w-4 h-4" />
-          Citizen Satisfaction
+          <SpeakableText>Citizen Satisfaction</SpeakableText>
         </h4>
         {!showFeedback ? (
           <Button 
             onClick={() => setShowFeedback(true)}
             className="w-full bg-green-600 hover:bg-green-700"
           >
-            Collect Citizen Feedback
+            <SpeakableText text="Collect Citizen Feedback">Collect Citizen Feedback</SpeakableText>
           </Button>
         ) : (
           <div className="space-y-3">

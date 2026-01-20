@@ -27,16 +27,16 @@ export default function Footer() {
               <h3 className="font-semibold text-white">VMC CiviSense</h3>
             </div>
             <p className="text-sm text-blue-50 mb-2">
-              AI-Based Geo-Fenced Civic Issue Monitoring System for Vadodara Municipal Corporation
+              {t('footer.description.line1')}
             </p>
             <p className="text-xs text-blue-100">
-              Empowering field staff with offline-first technology
+              {t('footer.description.line2')}
             </p>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h4 className="font-semibold text-white mb-3">Contact VMC</h4>
+            <h4 className="font-semibold text-white mb-3">{t('footer.contact.title')}</h4>
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-blue-50">
                 <Phone className="w-4 h-4" />
@@ -57,19 +57,19 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold text-white mb-3">Quick Links</h4>
+            <h4 className="font-semibold text-white mb-3">{t('footer.quick.links.title')}</h4>
             <div className="space-y-2">
               <a href="/field-worker" className="block text-sm text-blue-50 hover:text-white">
-                Field Worker Portal
+                {t('footer.portal.field.worker')}
               </a>
               <a href="/ward-engineer" className="block text-sm text-blue-50 hover:text-white">
-                Ward Engineer Portal
+                {t('footer.portal.ward.engineer')}
               </a>
               <a href="/zone-officer" className="block text-sm text-blue-50 hover:text-white">
-                Zone Officer Portal
+                {t('footer.portal.zone.officer')}
               </a>
               <a href="/admin" className="block text-sm text-blue-50 hover:text-white">
-                Admin Portal
+                {t('footer.portal.admin')}
               </a>
             </div>
           </div>
@@ -79,14 +79,14 @@ export default function Footer() {
         <div className="pt-4 border-t border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-xs text-blue-100">
-              © 2026 Vadodara Municipal Corporation. All rights reserved.
+              {t('footer.copyright')}
             </div>
             <div className="flex items-center gap-4 text-xs text-blue-100">
-              <span>Made for VMC Field Staff</span>
+              <span>{t('footer.made.for')}</span>
               <span>•</span>
-              <span>Offline-First PWA</span>
+              <span>{t('footer.offline.pwa')}</span>
               <span>•</span>
-              <span>GPS Enabled</span>
+              <span>{t('footer.gps.enabled')}</span>
             </div>
           </div>
         </div>
